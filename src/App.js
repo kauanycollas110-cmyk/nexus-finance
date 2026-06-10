@@ -224,7 +224,7 @@ export default function NexusFinance() {
     setAiLoading(true);
     try {
       const context = `
-PERFIL: Jovem aprendiz CLT, 17-18 anos, renda R$1.090 + VR R$330.
+PERFIL: Jovem aprendiz CLT, 17-18 anos, renda R$${state.income} + VR R$${state.vr}.
 Gastos fixos em assinaturas: R$${Math.round(totalSubsBRL)}
 Saldo livre mensal: R$${Math.round(saldoReal)}
 VR livre para comida: R$${vrLivre}
