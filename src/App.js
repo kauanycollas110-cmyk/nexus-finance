@@ -59,6 +59,8 @@ export default function NexusFinance() {
   const [aiLoading, setAiLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState(null);
+  const [editingIncome, setEditingIncome] = useState(false);
+  const [incomeTemp, setIncomeTemp] = useState("");
 
   useEffect(() => {
     try {
@@ -327,7 +329,43 @@ ${context}` }] }],
         <div style={S.cardGlow("#D4A84B")}>
           <div style={S.label}>Saldo Livre</div>
           <div style={{ ...S.val, color: saldoReal >= 0 ? "#D4A84B" : "#DC2626" }}>{fmt(saldoReal)}</div>
-          <div style={{ fontSize: 11, color: "#71717A", marginTop: 4 }}>de {fmt(state.income)} total</div>
+          {editingIncome ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+              <span style={{ fontSize: 11, color: "#71717A" }}>R$</span>
+              <input
+                type="number"
+                value={incomeTemp}
+                onChange={e => setIncomeTemp(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    const v = parseFloat(incomeTemp);
+                    if (!isNaN(v) && v > 0) { setState(p => ({ ...p, income: v })); notify("Salário atualizado para " + fmt(v)); }
+                    setEditingIncome(false);
+                  }
+                  if (e.key === "Escape") setEditingIncome(false);
+                }}
+                autoFocus
+                style={{ ...S.input, width: 100, padding: "4px 8px", fontSize: 12 }}
+              />
+              <button
+                onClick={() => {
+                  const v = parseFloat(incomeTemp);
+                  if (!isNaN(v) && v > 0) { setState(p => ({ ...p, income: v })); notify("Salário atualizado para " + fmt(v)); }
+                  setEditingIncome(false);
+                }}
+                style={{ background: "none", border: "none", color: "#22C55E", cursor: "pointer", fontSize: 14, padding: 2 }}
+              >✓</button>
+              <button onClick={() => setEditingIncome(false)} style={{ background: "none", border: "none", color: "#DC2626", cursor: "pointer", fontSize: 14, padding: 2 }}>✕</button>
+            </div>
+          ) : (
+            <div
+              onClick={() => { setIncomeTemp(String(state.income)); setEditingIncome(true); }}
+              style={{ fontSize: 11, color: "#71717A", marginTop: 4, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+              title="Clique para editar o salário"
+            >
+              de {fmt(state.income)} total <span style={{ fontSize: 10, color: "#3F3F46" }}>✎</span>
+            </div>
+          )}
         </div>
         <div style={S.cardGlow("#DC2626")}>
           <div style={S.label}>Comprometido Fixo</div>
